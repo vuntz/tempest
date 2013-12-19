@@ -142,7 +142,7 @@ class BaseComputeTest(tempest.test.BaseTestCase):
         flavor = kwargs.get('flavor', cls.flavor_ref)
         image_id = kwargs.get('image_id', cls.image_ref)
 
-        if cls.default_network is not None:
+        if 'networks' not in kwargs and cls.default_network is not None:
             networks = {'uuid': cls.default_network}
             kwargs.update({"networks": [networks]})
         resp, body = cls.servers_client.create_server(name, image_id, flavor,
