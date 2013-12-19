@@ -82,6 +82,8 @@ class BaseComputeTest(tempest.test.BaseTestCase):
         cls.flavor_ref_alt = cls.config.compute.flavor_ref_alt
         cls.servers = []
         cls.images = []
+        cls.fixed_network_name = cls.config.compute.fixed_network_name
+        cls.networks_client = cls.os.network_client
 
         cls.servers_client_v3_auth = os.servers_client_v3_auth
 
@@ -141,8 +143,30 @@ class BaseComputeTest(tempest.test.BaseTestCase):
         flavor = kwargs.get('flavor', cls.flavor_ref)
         image_id = kwargs.get('image_id', cls.image_ref)
 
-        resp, body = cls.servers_client.create_server(
-            name, image_id, flavor, **kwargs)
+        if 'networks' not in kwargs and cls.fixed_network_name:
+            try:
+                networks = cls.networks_client.list_networks(
+                    name=cls.fixed_network_name)[1].get('networks')
+                if networks:
+                    network = {'uuid': networks[0]['id']}
+                    kwargs.update({"networks": [network]})
+                else:
+                    raise exceptions.NotFound()
+            except exceptions.NotFound:
+                # In a number of legitimate situations, such as tenant
+                # isolation, we may not be able to see the configured network.
+                LOG.info('Unable to find network %s. '
+                         'Starting instance without specifying a network.' %
+                         cls.fixed_network_name)
+            except exceptions.EndpointNotFound:
+                # NOTE(bnemec): With nova-network we have no network endpoint
+                # so we can't retrieve the network id to use here, at least
+                # not without adding a Tempest client to retrieve it from
+                # nova.  This means Tempest won't be able to run against
+                # nova-network with multiple networks available.
+                pass
+        resp, body = cls.servers_client.create_server(name, image_id, flavor,
+                                                      **kwargs)
 
         # handle the case of multiple servers
         servers = [body]
