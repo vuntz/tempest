@@ -295,6 +295,9 @@ NetworkGroup = [
                default="",
                help="Id of the public router that provides external "
                     "connectivity"),
+    cfg.StrOpt('default_network',
+               default=None,
+               help="Spawn instances using this neutron network (UUID) only")
 ]
 
 volume_group = cfg.OptGroup(name='volume',

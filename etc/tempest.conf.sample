@@ -237,6 +237,10 @@ public_network_id = {$PUBLIC_NETWORK_ID}
 # for each tenant to have their own router.
 public_router_id = {$PUBLIC_ROUTER_ID}
 
+# Spawn instances using this neutron network (UUID) only
+# (string value)
+#default_network=<None>
+
 
 [volume]
 # This section contains the configuration options used when executing tests

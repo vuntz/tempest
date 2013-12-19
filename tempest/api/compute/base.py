@@ -82,6 +82,7 @@ class BaseComputeTest(tempest.test.BaseTestCase):
         cls.flavor_ref_alt = cls.config.compute.flavor_ref_alt
         cls.servers = []
         cls.images = []
+        cls.default_network = cls.config.network.default_network
 
         cls.servers_client_v3_auth = os.servers_client_v3_auth
 
@@ -141,8 +142,11 @@ class BaseComputeTest(tempest.test.BaseTestCase):
         flavor = kwargs.get('flavor', cls.flavor_ref)
         image_id = kwargs.get('image_id', cls.image_ref)
 
-        resp, body = cls.servers_client.create_server(
-            name, image_id, flavor, **kwargs)
+        if cls.default_network is not None:
+            networks = {'uuid': cls.default_network}
+            kwargs.update({"networks": [networks]})
+        resp, body = cls.servers_client.create_server(name, image_id, flavor,
+                                                      **kwargs)
 
         # handle the case of multiple servers
         servers = [body]
