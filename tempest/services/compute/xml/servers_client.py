@@ -323,8 +323,12 @@ class ServersClientXML(RestClientXML):
             networks = Element("networks")
             server.append(networks)
             for network in kwargs['networks']:
+                fixed_ip = network.get('fixed_ip')
+                fixed_ip_arg = {}
+                if fixed_ip:
+                    fixed_ip_arg['fixed_ip'] = fixed_ip
                 s = Element("network", uuid=network['uuid'],
-                            fixed_ip=network['fixed_ip'])
+                            **fixed_ip_arg)
                 networks.append(s)
 
         if 'meta' in kwargs:
