@@ -94,7 +94,7 @@ class ServersTestJSON(base.BaseComputeTest):
     @testtools.skipIf(not run_ssh, 'Instance validation tests are disabled.')
     @attr(type='gate')
     def test_can_log_into_created_server(self):
-        # Check that the user can authenticate with the generated password
+        # Check that the user can authenticate with the password
         linux_client = RemoteClient(self.server, self.ssh_user, self.password)
         self.assertTrue(linux_client.can_authenticate())
 
