@@ -166,6 +166,10 @@ class BaseComputeTest(tempest.test.BaseTestCase):
                 # nova.  This means Tempest won't be able to run against
                 # nova-network with multiple networks available.
                 pass
+
+        if 'adminPass' not in kwargs and image_id is cls.image_ref:
+            kwargs.update({"adminPass": cls.image_ssh_password})
+
         resp, body = cls.servers_client.create_server(name, image_id, flavor,
                                                       **kwargs)
 
