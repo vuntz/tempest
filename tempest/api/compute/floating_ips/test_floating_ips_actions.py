@@ -147,9 +147,9 @@ class FloatingIPsTestJSON(base.BaseComputeTest):
         # positive test:Association of an already associated floating IP
         # to specific server should change the association of the Floating IP
         # Create server so as to use for Multiple association
-        resp, body = self.servers_client.create_server('floating-server2',
-                                                       self.image_ref,
-                                                       self.flavor_ref)
+        resp, body = self.create_server(name='floating-server2',
+                                        image_id=self.image_ref,
+                                        flavor=self.flavor_ref)
         self.servers_client.wait_for_server_status(body['id'], 'ACTIVE')
         self.new_server_id = body['id']
 
