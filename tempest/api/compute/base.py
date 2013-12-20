@@ -142,6 +142,9 @@ class BaseComputeTest(tempest.test.BaseTestCase):
         flavor = kwargs.get('flavor', cls.flavor_ref)
         image_id = kwargs.get('image_id', cls.image_ref)
 
+        if 'adminPass' not in kwargs and image_id is cls.image_ref:
+            kwargs.update({"adminPass": cls.image_ssh_password})
+
         if 'networks' not in kwargs and cls.default_network is not None:
             networks = {'uuid': cls.default_network}
             kwargs.update({"networks": [networks]})
