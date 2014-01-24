@@ -395,6 +395,22 @@ class OfficialClientTest(tempest.test.BaseTestCase):
             image = self.config.compute.image_ref
         if flavor is None:
             flavor = self.config.compute.flavor_ref
+
+        fixed_network_name = self.config.compute.fixed_network_name
+        if 'nics' not in create_kwargs and fixed_network_name:
+            networks = client.networks.list()
+            if len(networks) > 1:
+                for network in networks:
+                    if network.label == fixed_network_name:
+                        create_kwargs['nics'] = [{'net-id': network.id}]
+                        break
+                else:
+                    msg = ("The network on which the NIC of the server must "
+                           "be connected can not be found : "
+                           "fixed_network_name=%s. Starting instance without "
+                           "specifying a network.") % fixed_network_name
+                    LOG.info(msg)
+
         LOG.debug("Creating a server (name: %s, image: %s, flavor: %s)",
                   name, image, flavor)
         server = client.servers.create(name, image, flavor, **create_kwargs)
