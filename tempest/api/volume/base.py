@@ -80,11 +80,11 @@ class BaseVolumeTest(tempest.test.BaseTestCase):
         """Utility that returns a network structure for creating a server"""
         if cls.fixed_network_name:
             try:
-                networks = cls.networks_client.list_networks(
-                    name=cls.fixed_network_name)[1].get('networks')
-                if networks:
-                    network = {'uuid': networks[0]['id']}
-                    return [network]
+                networks = cls.networks_client.list_networks()[1].get('networks')
+                for network in networks:
+                    if network['name'] == cls.fixed_network_name:
+                        uuid = {'uuid': network['id']}
+                        return [uuid]
                 else:
                     raise exceptions.NotFound()
             except exceptions.NotFound:

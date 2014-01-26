@@ -145,11 +145,12 @@ class BaseComputeTest(tempest.test.BaseTestCase):
 
         if 'networks' not in kwargs and cls.fixed_network_name:
             try:
-                networks = cls.networks_client.list_networks(
-                    name=cls.fixed_network_name)[1].get('networks')
-                if networks:
-                    network = {'uuid': networks[0]['id']}
-                    kwargs.update({"networks": [network]})
+                networks = cls.networks_client.list_networks()[1].get('networks')
+                for network in networks:
+                    if network['name'] == cls.fixed_network_name:
+                        uuid = {'uuid': network['id']}
+                        kwargs.update({"networks": [uuid]})
+                        break
                 else:
                     raise exceptions.NotFound()
             except exceptions.NotFound:
